@@ -1,5 +1,11 @@
-Bulan,Penerima (Juta),Jumlah SPPG
-Januari 2025,3.0,190.0
-Mei 2025,4.4,1583.0
-Juli 2025,6.38,2109.0
-Oktober 2025,40.0,
+Bulan,Penerima (Juta),SPPG
+Januari,3.0,190
+Februari,3.2,350
+Maret,3.5,580
+April,3.8,850
+Mei,4.4,1583
+Juni,5.2,1850
+Juli,6.38,2109
+Agustus,12.5,3500
+September,25.0,5200
+Oktober,40.0,7800

@@ -1,7 +1,11 @@
 Provinsi,Prevalensi (%),Kategori
-Nusa Tenggara Timur,37.0,Tertinggi
-Sulawesi Barat,35.4,Tertinggi
-Papua Barat Daya,30.5,Tertinggi
-Bali,8.6,Terendah
-Jawa Timur,14.7,Terendah
-Kepulauan Riau,15.0,Terendah
+NTT,37.0,Tinggi
+Sulawesi Barat,35.4,Tinggi
+Papua Barat Daya,30.5,Tinggi
+Maluku,28.8,Tinggi
+Papua,28.5,Tinggi
+Gorontalo,27.2,Tinggi
+DKI Jakarta,16.2,Rendah
+Bali,8.6,Rendah
+Jawa Timur,14.7,Rendah
+Kepulauan Riau,15.0,Rendah
