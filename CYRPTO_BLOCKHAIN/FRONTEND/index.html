@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💰 CryptoChain Explorer</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <i class="fas fa-bitcoin"></i>
+                <h1>CRYPTO<span>CHAIN</span></h1>
+            </div>
+            <div class="network-status">
+                <span class="status-dot"></span>
+                <span>Network: Live</span>
+                <span class="block-count">Blocks: <span id="blockCount">0</span></span>
+            </div>
+        </header>
+
+        <!-- Main Dashboard -->
+        <div class="dashboard">
+            <!-- Left Panel -->
+            <div class="left-panel">
+                <div class="card wallet-card">
+                    <h2><i class="fas fa-wallet"></i> My Wallet</h2>
+                    <div class="wallet-info">
+                        <div class="address-display">
+                            <label>Address:</label>
+                            <input type="text" id="walletAddress" readonly>
+                            <button onclick="copyAddress()"><i class="fas fa-copy"></i></button>
+                        </div>
+                        <div class="balance">
+                            <h3>Balance</h3>
+                            <div class="balance-amount" id="balance">0.0 <span>CTC</span></div>
+                        </div>
+                        <button class="btn btn-primary" onclick="createWallet()">
+                            <i class="fas fa-plus-circle"></i> New Wallet
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card transaction-card">
+                    <h2><i class="fas fa-exchange-alt"></i> Send Transaction</h2>
+                    <div class="form-group">
+                        <label>From Address</label>
+                        <input type="text" id="senderAddress" placeholder="Your wallet address">
+                    </div>
+                    <div class="form-group">
+                        <label>To Address</label>
+                        <input type="text" id="recipientAddress" placeholder="Recipient address">
+                    </div>
+                    <div class="form-group">
+                        <label>Amount (CTC)</label>
+                        <input type="number" id="amount" placeholder="0.0" step="0.1">
+                    </div>
+                    <button class="btn btn-success" onclick="sendTransaction()">
+                        <i class="fas fa-paper-plane"></i> Send Tokens
+                    </button>
+                </div>
+
+                <div class="card mining-card">
+                    <h2><i class="fas fa-digging"></i> Mining</h2>
+                    <p>Mine new blocks and earn rewards</p>
+                    <button class="btn btn-warning" onclick="mineBlock()">
+                        <i class="fas fa-hammer"></i> Mine Block
+                    </button>
+                    <div class="mining-stats">
+                        <div>Difficulty: <span>0000</span></div>
+                        <div>Reward: <span>1.0 CTC</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Panel -->
+            <div class="right-panel">
+                <div class="card chain-card">
+                    <h2><i class="fas fa-link"></i> Blockchain</h2>
+                    <div class="chain-controls">
+                        <button class="btn btn-sm" onclick="loadChain()">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                    </div>
+                    <div class="blocks-container" id="blocksContainer">
+                        <!-- Blocks will be loaded here -->
+                    </div>
+                </div>
+
+                <div class="card transactions-card">
+                    <h2><i class="fas fa-list"></i> Recent Transactions</h2>
+                    <div class="transactions-list" id="transactionsList">
+                        <!-- Transactions will be loaded here -->
+                    </div>
+                </div>
+
+                <div class="card stats-card">
+                    <h2><i class="fas fa-chart-line"></i> Network Stats</h2>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-label">Total Blocks</div>
+                            <div class="stat-value" id="totalBlocks">0</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Total Transactions</div>
+                            <div class="stat-value" id="totalTransactions">0</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Network Hashrate</div>
+                            <div class="stat-value">4.2 MH/s</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Active Nodes</div>
+                            <div class="stat-value" id="activeNodes">1</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>🚀 CryptoChain Explorer v1.0 | Real-time Blockchain Dashboard</p>
+            <div class="footer-links">
+                <a href="#"><i class="fab fa-github"></i> GitHub</a>
+                <a href="#"><i class="fas fa-book"></i> Docs</a>
+                <a href="#"><i class="fas fa-users"></i> Community</a>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Modals -->
+    <div id="transactionModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3>Transaction Details</h3>
+            <div id="transactionDetails"></div>
+        </div>
+    </div>
+
+    <div id="blockModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3>Block Details</h3>
+            <div id="blockDetails"></div>
+        </div>
+    </div>
+
+    <script src="blockchain.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
