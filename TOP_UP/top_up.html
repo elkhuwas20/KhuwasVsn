@@ -1,0 +1,1442 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KhuwasStore - Top Up Mobile Legends</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <style>
+        :root {
+            --primary: #f39c12;
+            --primary-dark: #e67e22;
+            --secondary: #e74c3c;
+            --secondary-dark: #c0392b;
+            --dark: #2c3e50;
+            --darker: #1a252f;
+            --light: #ecf0f1;
+            --success: #2ecc71;
+            --info: #3498db;
+            --warning: #f1c40f;
+            --danger: #e74c3c;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0c2461 0%, #1a252f 100%);
+            color: var(--light);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header & Navigation */
+        header {
+            background: linear-gradient(90deg, var(--darker) 0%, rgba(44, 62, 80, 0.95) 100%);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: var(--shadow);
+            border-bottom: 3px solid var(--primary);
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(45deg, var(--primary), var(--warning));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .logo-text h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(to right, var(--primary), var(--warning));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .logo-text p {
+            font-size: 0.8rem;
+            color: #95a5a6;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-links a {
+            color: var(--light);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 8px 15px;
+            border-radius: 5px;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            background: rgba(243, 156, 18, 0.2);
+            color: var(--primary);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .balance {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 8px 15px;
+            border-radius: 20px;
+            border: 1px solid rgba(243, 156, 18, 0.5);
+        }
+
+        .balance span {
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        .cart-icon {
+            position: relative;
+            cursor: pointer;
+            font-size: 1.3rem;
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: var(--secondary);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 60px 0;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.3);
+            margin-bottom: 40px;
+            border-radius: 0 0 20px 20px;
+        }
+
+        .hero h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            max-width: 800px;
+            margin: 0 auto 30px;
+            color: #bdc3c7;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 30px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, var(--primary), var(--warning));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(243, 156, 18, 0.3);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(45deg, var(--info), #2980b9);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(52, 152, 219, 0.3);
+        }
+
+        /* Main Content */
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        /* Products Section */
+        .section-title {
+            font-size: 1.8rem;
+            margin-bottom: 25px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid rgba(243, 156, 18, 0.3);
+        }
+
+        .category-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 30px;
+            cursor: pointer;
+            transition: var(--transition);
+            border: 2px solid transparent;
+        }
+
+        .tab:hover,
+        .tab.active {
+            background: rgba(243, 156, 18, 0.2);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* Products Grid */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 50px;
+        }
+
+        .product-card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .product-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .badge-popular {
+            background: linear-gradient(45deg, var(--secondary), var(--danger));
+            color: white;
+        }
+
+        .badge-new {
+            background: linear-gradient(45deg, var(--success), #27ae60);
+            color: white;
+        }
+
+        .badge-sale {
+            background: linear-gradient(45deg, var(--warning), #f39c12);
+            color: white;
+        }
+
+        .product-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(45deg, var(--dark), var(--darker));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin: 0 auto 20px;
+            color: var(--primary);
+        }
+
+        .product-title {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            color: var(--primary);
+            text-align: center;
+        }
+
+        .product-description {
+            color: #bdc3c7;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+            text-align: center;
+            min-height: 60px;
+        }
+
+        .product-price {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--primary);
+            text-align: center;
+            margin-bottom: 5px;
+        }
+
+        .product-old-price {
+            text-decoration: line-through;
+            color: #95a5a6;
+            font-size: 1rem;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .product-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-buy {
+            flex: 1;
+            padding: 12px;
+            background: linear-gradient(45deg, var(--primary), var(--warning));
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-buy:hover {
+            background: linear-gradient(45deg, var(--primary-dark), #d35400);
+        }
+
+        .btn-detail {
+            padding: 12px 20px;
+            background: rgba(52, 152, 219, 0.2);
+            color: var(--info);
+            border: 1px solid var(--info);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-detail:hover {
+            background: rgba(52, 152, 219, 0.4);
+        }
+
+        /* Cart Sidebar */
+        .cart-sidebar {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+        }
+
+        .cart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid rgba(243, 156, 18, 0.3);
+        }
+
+        .cart-items {
+            max-height: 400px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .cart-item-info h4 {
+            margin-bottom: 5px;
+            color: var(--primary);
+        }
+
+        .cart-item-price {
+            color: var(--success);
+            font-weight: bold;
+        }
+
+        .cart-item-remove {
+            color: var(--danger);
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+        }
+
+        .cart-total {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.3rem;
+            font-weight: bold;
+            padding: 20px 0;
+            border-top: 2px solid rgba(243, 156, 18, 0.3);
+        }
+
+        .cart-total span {
+            color: var(--primary);
+        }
+
+        .btn-checkout {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(45deg, var(--success), #27ae60);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-checkout:hover {
+            background: linear-gradient(45deg, #27ae60, #219653);
+        }
+
+        /* How to Order */
+        .how-to-order {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 50px;
+        }
+
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .step {
+            text-align: center;
+        }
+
+        .step-number {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(45deg, var(--primary), var(--warning));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 0 auto 20px;
+        }
+
+        .step h4 {
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        /* Testimonials */
+        .testimonials {
+            margin-bottom: 50px;
+        }
+
+        .testimonial-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .testimonial-card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .testimonial-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .testimonial-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .testimonial-rating {
+            color: var(--warning);
+        }
+
+        /* Footer */
+        footer {
+            background: linear-gradient(90deg, var(--darker) 0%, rgba(44, 62, 80, 0.95) 100%);
+            padding: 50px 0 20px;
+            margin-top: 50px;
+            border-top: 3px solid var(--primary);
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-section h3 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 10px;
+        }
+
+        .footer-section ul li a {
+            color: #bdc3c7;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .footer-section ul li a:hover {
+            color: var(--primary);
+            padding-left: 5px;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-links a {
+            width: 40px;
+            height: 40px;
+            background: rgba(243, 156, 18, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .social-links a:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-5px);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #95a5a6;
+            font-size: 0.9rem;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: rgba(26, 37, 47, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            border: 2px solid var(--primary);
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: var(--light);
+            font-size: 2rem;
+            cursor: pointer;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: var(--light);
+            font-size: 1rem;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .cart-sidebar {
+                position: static;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .hero h2 {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .hero {
+                padding: 40px 0;
+            }
+            
+            .user-info {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header & Navigation -->
+    <header>
+        <div class="container">
+            <nav class="navbar">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-crown"></i>
+                    </div>
+                    <div class="logo-text">
+                        <h1>KhuwasStore</h1>
+                        <p>Top Up Mobile Legends Terpercaya</p>
+                    </div>
+                </div>
+                
+                <div class="nav-links">
+                    <a href="#home" class="active"><i class="fas fa-home"></i> Beranda</a>
+                    <a href="#diamond"><i class="fas fa-gem"></i> Diamond</a>
+                    <a href="#joki"><i class="fas fa-user-ninja"></i> Joki</a>
+                    <a href="#mabar"><i class="fas fa-users"></i> Mabar</a>
+                    <a href="#testimoni"><i class="fas fa-star"></i> Testimoni</a>
+                </div>
+                
+                <div class="user-info">
+                    <div class="balance">
+                        Saldo: <span id="userBalance">Rp 0</span>
+                    </div>
+                    <div class="cart-icon" onclick="toggleCart()">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-count" id="cartCount">0</span>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="container">
+            <h2>TOP UP MOBILE LEGENDS AMAN & CEPAT</h2>
+            <p>Diamond, Joki Rank, dan Mabar dengan harga termurah di KhuwasStore. Proses instant, aman 100%, dan customer service online 24 jam.</p>
+            <div class="cta-buttons">
+                <button class="btn btn-primary" onclick="scrollToSection('diamond')">
+                    <i class="fas fa-gem"></i> BELI DIAMOND
+                </button>
+                <button class="btn btn-secondary" onclick="scrollToSection('joki')">
+                    <i class="fas fa-user-ninja"></i> ORDER JOKI
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="main-content">
+            <!-- Products Section -->
+            <div class="products-section">
+                <div class="category-tabs">
+                    <div class="tab active" onclick="showCategory('diamond')">💎 Diamond</div>
+                    <div class="tab" onclick="showCategory('joki')">⚔️ Joki Rank</div>
+                    <div class="tab" onclick="showCategory('mabar')">👥 Mabar</div>
+                </div>
+                
+                <!-- Diamond Products -->
+                <div class="category-content" id="diamond-content">
+                    <h3 class="section-title"><i class="fas fa-gem"></i> Paket Diamond Mobile Legends</h3>
+                    <div class="products-grid" id="diamond-products">
+                        <!-- Diamond products will be loaded here -->
+                    </div>
+                </div>
+                
+                <!-- Joki Products -->
+                <div class="category-content" id="joki-content" style="display: none;">
+                    <h3 class="section-title"><i class="fas fa-user-ninja"></i> Layanan Joki Rank</h3>
+                    <div class="products-grid" id="joki-products">
+                        <!-- Joki products will be loaded here -->
+                    </div>
+                </div>
+                
+                <!-- Mabar Products -->
+                <div class="category-content" id="mabar-content" style="display: none;">
+                    <h3 class="section-title"><i class="fas fa-users"></i> Main Bareng (Mabar)</h3>
+                    <div class="products-grid" id="mabar-products">
+                        <!-- Mabar products will be loaded here -->
+                    </div>
+                </div>
+                
+                <!-- How to Order -->
+                <div class="how-to-order">
+                    <h3 class="section-title"><i class="fas fa-info-circle"></i> Cara Order di KhuwasStore</h3>
+                    <div class="steps">
+                        <div class="step">
+                            <div class="step-number">1</div>
+                            <h4>Pilih Produk</h4>
+                            <p>Pilih diamond, joki, atau mabar sesuai kebutuhan</p>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">2</div>
+                            <h4>Isi Data Akun</h4>
+                            <p>Masukkan ID, server, dan detail akun ML Anda</p>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">3</div>
+                            <h4>Pembayaran</h4>
+                            <p>Bayar via transfer bank, e-wallet, atau QRIS</p>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">4</div>
+                            <h4>Proses & Selesai</h4>
+                            <p>Proses cepat dalam 1-5 menit setelah pembayaran</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Testimonials -->
+                <div class="testimonials" id="testimoni">
+                    <h3 class="section-title"><i class="fas fa-star"></i> Testimoni Pelanggan</h3>
+                    <div class="testimonial-grid">
+                        <!-- Testimonials will be loaded here -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Cart Sidebar -->
+            <div class="cart-sidebar">
+                <div class="cart-header">
+                    <h3><i class="fas fa-shopping-cart"></i> Keranjang Belanja</h3>
+                    <button class="btn btn-secondary" onclick="clearCart()">
+                        <i class="fas fa-trash"></i> Kosongkan
+                    </button>
+                </div>
+                
+                <div class="cart-items" id="cartItems">
+                    <!-- Cart items will be loaded here -->
+                    <div class="empty-cart">
+                        <p style="text-align: center; color: #95a5a6;">Keranjang belanja masih kosong</p>
+                    </div>
+                </div>
+                
+                <div class="cart-total">
+                    <span>Total:</span>
+                    <span id="cartTotal">Rp 0</span>
+                </div>
+                
+                <button class="btn-checkout" onclick="checkout()">
+                    <i class="fas fa-check-circle"></i> CHECKOUT SEKARANG
+                </button>
+                
+                <div style="margin-top: 20px; text-align: center;">
+                    <p style="color: #95a5a6; font-size: 0.9rem;">
+                        <i class="fas fa-shield-alt"></i> 100% Aman & Terpercaya
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>KhuwasStore</h3>
+                    <p>Top Up Mobile Legends terpercaya sejak 2020. Layanan cepat, aman, dan harga terjangkau.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-whatsapp"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-telegram"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Layanan</h3>
+                    <ul>
+                        <li><a href="#diamond">💎 Top Up Diamond</a></li>
+                        <li><a href="#joki">⚔️ Joki Rank</a></li>
+                        <li><a href="#mabar">👥 Main Bareng</a></li>
+                        <li><a href="#">🎮 Top Up Game Lain</a></li>
+                        <li><a href="#">🛡️ Garansi Akun Aman</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Metode Pembayaran</h3>
+                    <ul>
+                        <li>🏦 Transfer Bank</li>
+                        <li>📱 E-Wallet (OVO, Dana, Gopay)</li>
+                        <li>💳 QRIS</li>
+                        <li>🏪 Minimarket (Alfamart, Indomaret)</li>
+                        <li>🔗 Virtual Account</li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Kontak</h3>
+                    <ul>
+                        <li><i class="fas fa-phone"></i> 0812-3456-7890</li>
+                        <li><i class="fab fa-whatsapp"></i> WhatsApp: 0812-3456-7890</li>
+                        <li><i class="fas fa-envelope"></i> cs@khuwasstore.com</li>
+                        <li><i class="fas fa-clock"></i> Buka 24 Jam</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>© 2024 KhuwasStore - Top Up Mobile Legends. All rights reserved.</p>
+                <p>Mobile Legends is a registered trademark of Moonton. KhuwasStore is not affiliated with Moonton.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Checkout Modal -->
+    <div class="modal" id="checkoutModal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeModal()">&times;</button>
+            <h2 style="color: var(--primary); margin-bottom: 25px;">
+                <i class="fas fa-check-circle"></i> Checkout Pesanan
+            </h2>
+            
+            <form id="checkoutForm">
+                <div class="form-group">
+                    <label for="userId"><i class="fas fa-user"></i> ID Mobile Legends</label>
+                    <input type="text" id="userId" class="form-control" placeholder="Masukkan ID ML" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="userServer"><i class="fas fa-server"></i> Server ID</label>
+                    <select id="userServer" class="form-control" required>
+                        <option value="">Pilih Server</option>
+                        <option value="3010">3010 (Indonesia)</option>
+                        <option value="3011">3011 (Malaysia)</option>
+                        <option value="3012">3012 (Singapore)</option>
+                        <option value="3013">3013 (Philippines)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="userNickname"><i class="fas fa-gamepad"></i> Nickname ML</label>
+                    <input type="text" id="userNickname" class="form-control" placeholder="Masukkan nickname" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="paymentMethod"><i class="fas fa-credit-card"></i> Metode Pembayaran</label>
+                    <select id="paymentMethod" class="form-control" required>
+                        <option value="">Pilih Pembayaran</option>
+                        <option value="bca">BCA Transfer</option>
+                        <option value="bni">BNI Transfer</option>
+                        <option value="bri">BRI Transfer</option>
+                        <option value="mandiri">Mandiri Transfer</option>
+                        <option value="ovo">OVO</option>
+                        <option value="gopay">GoPay</option>
+                        <option value="dana">DANA</option>
+                        <option value="qris">QRIS</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="userEmail"><i class="fas fa-envelope"></i> Email (Opsional)</label>
+                    <input type="email" id="userEmail" class="form-control" placeholder="email@example.com">
+                </div>
+                
+                <div style="background: rgba(243, 156, 18, 0.1); padding: 15px; border-radius: 10px; margin: 20px 0;">
+                    <h4 style="color: var(--primary); margin-bottom: 10px;">Ringkasan Pesanan</h4>
+                    <div id="orderSummary"></div>
+                    <div style="margin-top: 10px; font-weight: bold;">
+                        Total: <span id="modalTotal" style="color: var(--success);"></span>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn-checkout" style="width: 100%;">
+                    <i class="fas fa-paper-plane"></i> KONFIRMASI PEMESANAN
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Payment Modal -->
+    <div class="modal" id="paymentModal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closePaymentModal()">&times;</button>
+            <h2 style="color: var(--primary); margin-bottom: 25px;">
+                <i class="fas fa-qrcode"></i> Pembayaran
+            </h2>
+            
+            <div id="paymentContent">
+                <!-- Payment content will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script>
+        // Initialize Toastr
+        toastr.options = {
+            "closeButton": true,
+            "progressBar": true,
+            "positionClass": "toast-top-right",
+            "timeOut": "5000"
+        };
+
+        // Data Produk
+        const products = {
+            diamond: [
+                { id: 1, name: "86 Diamond", price: 24000, oldPrice: 28000, description: "Cocok untuk skin atau emblem", icon: "gem", badge: "popular" },
+                { id: 2, name: "172 Diamond", price: 48000, oldPrice: 55000, description: "Paket hemat untuk pemula", icon: "gem", badge: "sale" },
+                { id: 3, name: "257 Diamond", price: 72000, oldPrice: 80000, description: "Skin premium atau hero baru", icon: "gem", badge: null },
+                { id: 4, name: "344 Diamond", price: 96000, oldPrice: 105000, description: "Bundle diamond termurah", icon: "gem", badge: "popular" },
+                { id: 5, name: "429 Diamond", price: 120000, oldPrice: 135000, description: "Cukup untuk skin epic", icon: "gem", badge: "new" },
+                { id: 6, name: "514 Diamond", price: 144000, oldPrice: 160000, description: "Paket diamond terlaris", icon: "gem", badge: "popular" },
+                { id: 7, name: "706 Diamond", price: 192000, oldPrice: 210000, description: "Diamond dengan bonus", icon: "gem", badge: null },
+                { id: 8, name: "1412 Diamond", price: 384000, oldPrice: 420000, description: "Paket jumbo paling hemat", icon: "gem", badge: "sale" }
+            ],
+            joki: [
+                { id: 9, name: "Joki Epic ke Legend", price: 150000, oldPrice: 180000, description: "Win rate 80%+ guarantee", icon: "user-ninja", badge: "popular" },
+                { id: 10, name: "Joki Legend ke Mythic", price: 300000, oldPrice: 350000, description: "Pro player dengan 100+ stars", icon: "user-ninja", badge: null },
+                { id: 11, name: "Joki Classic 10 Match", price: 75000, oldPrice: 90000, description: "Boost MMR dan win rate", icon: "user-ninja", badge: "new" },
+                { id: 12, name: "Joki Mythic Glory", price: 500000, oldPrice: 600000, description: "Top global player", icon: "user-ninja", badge: null },
+                { id: 13, name: "Joki Weekly Pass", price: 200000, oldPrice: 250000, description: "7 hari unlimited rank", icon: "user-ninja", badge: "sale" },
+                { id: 14, name: "Joki Custom Request", price: 100000, oldPrice: 120000, description: "Sesuai permintaan Anda", icon: "user-ninja", badge: null }
+            ],
+            mabar: [
+                { id: 15, name: "Mabar 1 Jam", price: 25000, oldPrice: 30000, description: "Main bareng pro player", icon: "users", badge: "popular" },
+                { id: 16, name: "Mabar 3 Jam", price: 60000, oldPrice: 75000, description: "Paket hemat untuk squad", icon: "users", badge: "sale" },
+                { id: 17, name: "Mabar 5 Match", price: 40000, oldPrice: 50000, description: "5 game win streak", icon: "users", badge: null },
+                { id: 18, name: "Mabar Pro Player", price: 100000, oldPrice: 120000, description: "Dengan top global player", icon: "users", badge: "new" },
+                { id: 19, name: "Mabar & Coaching", price: 75000, oldPrice: 90000, description: "Main sambil belajar tips", icon: "users", badge: null },
+                { id: 20, name: "Mabar Squad (5 orang)", price: 150000, oldPrice: 180000, description: "Full squad pro players", icon: "users", badge: "popular" }
+            ]
+        };
+
+        // Testimonial Data
+        const testimonials = [
+            { name: "Rizki", rating: 5, comment: "Top up diamond cepet banget, ga sampe 5 menit langsung masuk. Terima kasih KhuwasStore!", avatar: "👤" },
+            { name: "Sinta", rating: 5, comment: "Joki dari Epic ke Mythic cuma 2 hari, pro player nya ramah dan komunikatif. Recommended!", avatar: "👩" },
+            { name: "Andi", rating: 5, comment: "Pertama kali mabar sama pro player, banyak banget tips yang didapet. Next order lagi!", avatar: "👨" },
+            { name: "Dewi", rating: 4, comment: "Harga terjangkau dan proses cepat. CS nya ramah dan responsif. Bakal langganan di sini.", avatar: "👩‍💼" }
+        ];
+
+        // Cart and User Data
+        let cart = JSON.parse(localStorage.getItem('khuwasstore_cart')) || [];
+        let userBalance = 1000000; // Default balance
+
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProducts();
+            loadTestimonials();
+            updateCart();
+            updateBalanceDisplay();
+            
+            // Event listeners
+            document.getElementById('checkoutForm').addEventListener('submit', processCheckout);
+            
+            // Show diamond by default
+            showCategory('diamond');
+        });
+
+        // Load Products
+        function loadProducts() {
+            // Load diamond products
+            const diamondGrid = document.getElementById('diamond-products');
+            diamondGrid.innerHTML = products.diamond.map(product => createProductCard(product)).join('');
+            
+            // Load joki products
+            const jokiGrid = document.getElementById('joki-products');
+            jokiGrid.innerHTML = products.joki.map(product => createProductCard(product)).join('');
+            
+            // Load mabar products
+            const mabarGrid = document.getElementById('mabar-products');
+            mabarGrid.innerHTML = products.mabar.map(product => createProductCard(product)).join('');
+        }
+
+        // Create Product Card
+        function createProductCard(product) {
+            const badge = product.badge ? 
+                `<div class="product-badge badge-${product.badge}">${product.badge.toUpperCase()}</div>` : '';
+            
+            const oldPrice = product.oldPrice ? 
+                `<div class="product-old-price">Rp ${product.oldPrice.toLocaleString()}</div>` : '';
+            
+            return `
+                <div class="product-card">
+                    ${badge}
+                    <div class="product-icon">
+                        <i class="fas fa-${product.icon}"></i>
+                    </div>
+                    <h3 class="product-title">${product.name}</h3>
+                    <p class="product-description">${product.description}</p>
+                    <div class="product-price">Rp ${product.price.toLocaleString()}</div>
+                    ${oldPrice}
+                    <div class="product-actions">
+                        <button class="btn-buy" onclick="addToCart(${product.id}, '${product.name}', ${product.price})">
+                            <i class="fas fa-cart-plus"></i> TAMBAH
+                        </button>
+                        <button class="btn-detail" onclick="showProductDetail(${product.id})">
+                            <i class="fas fa-info"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Load Testimonials
+        function loadTestimonials() {
+            const testimonialGrid = document.querySelector('.testimonial-grid');
+            testimonialGrid.innerHTML = testimonials.map(testimonial => `
+                <div class="testimonial-card">
+                    <div class="testimonial-header">
+                        <div class="testimonial-avatar" style="background: linear-gradient(45deg, var(--primary), var(--warning)); display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+                            ${testimonial.avatar}
+                        </div>
+                        <div>
+                            <h4>${testimonial.name}</h4>
+                            <div class="testimonial-rating">
+                                ${'★'.repeat(testimonial.rating)}${'☆'.repeat(5 - testimonial.rating)}
+                            </div>
+                        </div>
+                    </div>
+                    <p>"${testimonial.comment}"</p>
+                </div>
+            `).join('');
+        }
+
+        // Category Switching
+        function showCategory(category) {
+            // Update tabs
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Update content
+            document.querySelectorAll('.category-content').forEach(content => content.style.display = 'none');
+            document.getElementById(`${category}-content`).style.display = 'block';
+            
+            // Scroll to category
+            scrollToSection(category);
+        }
+
+        // Cart Functions
+        function addToCart(productId, productName, price) {
+            // Find product category
+            let productCategory = 'diamond';
+            let product = products.diamond.find(p => p.id === productId);
+            
+            if (!product) {
+                product = products.joki.find(p => p.id === productId);
+                productCategory = 'joki';
+            }
+            
+            if (!product) {
+                product = products.mabar.find(p => p.id === productId);
+                productCategory = 'mabar';
+            }
+            
+            if (product) {
+                // Check if product already in cart
+                const existingItem = cart.find(item => item.id === productId);
+                
+                if (existingItem) {
+                    existingItem.quantity += 1;
+                } else {
+                    cart.push({
+                        id: productId,
+                        name: productName,
+                        price: price,
+                        category: productCategory,
+                        quantity: 1
+                    });
+                }
+                
+                // Save to localStorage
+                localStorage.setItem('khuwasstore_cart', JSON.stringify(cart));
+                
+                // Update UI
+                updateCart();
+                
+                // Show success message
+                toastr.success(`${productName} berhasil ditambahkan ke keranjang!`);
+            }
+        }
+
+        function updateCart() {
+            const cartCount = cart.reduce((total, item) => total + item.quantity, 0);
+            document.getElementById('cartCount').textContent = cartCount;
+            
+            const cartItems = document.getElementById('cartItems');
+            const cartTotal = cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+            
+            document.getElementById('cartTotal').textContent = `Rp ${cartTotal.toLocaleString()}`;
+            
+            if (cart.length === 0) {
+                cartItems.innerHTML = '<div class="empty-cart"><p style="text-align: center; color: #95a5a6;">Keranjang belanja masih kosong</p></div>';
+                return;
+            }
+            
+            cartItems.innerHTML = cart.map(item => `
+                <div class="cart-item">
+                    <div class="cart-item-info">
+                        <h4>${item.name}</h4>
+                        <div style="font-size: 0.9rem; color: #95a5a6;">
+                            ${item.quantity} x Rp ${item.price.toLocaleString()}
+                        </div>
+                    </div>
+                    <div class="cart-item-price">
+                        Rp ${(item.price * item.quantity).toLocaleString()}
+                    </div>
+                    <button class="cart-item-remove" onclick="removeFromCart(${item.id})">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function removeFromCart(productId) {
+            cart = cart.filter(item => item.id !== productId);
+            localStorage.setItem('khuwasstore_cart', JSON.stringify(cart));
+            updateCart();
+            toastr.warning('Produk dihapus dari keranjang');
+        }
+
+        function clearCart() {
+            if (cart.length === 0) {
+                toastr.info('Keranjang sudah kosong');
+                return;
+            }
+            
+            if (confirm('Apakah Anda yakin ingin mengosongkan keranjang?')) {
+                cart = [];
+                localStorage.setItem('khuwasstore_cart', JSON.stringify(cart));
+                updateCart();
+                toastr.info('Keranjang berhasil dikosongkan');
+            }
+        }
+
+        // Checkout Process
+        function checkout() {
+            if (cart.length === 0) {
+                toastr.error('Keranjang belanja masih kosong');
+                return;
+            }
+            
+            // Show order summary in modal
+            const orderSummary = document.getElementById('orderSummary');
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            
+            orderSummary.innerHTML = cart.map(item => `
+                <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                    <span>${item.name} (${item.quantity}x)</span>
+                    <span>Rp ${(item.price * item.quantity).toLocaleString()}</span>
+                </div>
+            `).join('');
+            
+            document.getElementById('modalTotal').textContent = `Rp ${total.toLocaleString()}`;
+            
+            // Show modal
+            document.getElementById('checkoutModal').style.display = 'flex';
+        }
+
+        function processCheckout(e) {
+            e.preventDefault();
+            
+            const userId = document.getElementById('userId').value;
+            const userServer = document.getElementById('userServer').value;
+            const userNickname = document.getElementById('userNickname').value;
+            const paymentMethod = document.getElementById('paymentMethod').value;
+            
+            // Calculate total
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            
+            // Simulate payment process
+            showPaymentMethod(paymentMethod, total);
+            
+            // Close checkout modal
+            closeModal();
+        }
+
+        function showPaymentMethod(method, total) {
+            const paymentContent = document.getElementById('paymentContent');
+            let paymentHTML = '';
+            
+            switch(method) {
+                case 'bca':
+                    paymentHTML = `
+                        <h3 style="color: var(--primary);">Transfer Bank BCA</h3>
+                        <p>Silakan transfer ke:</p>
+                        <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 10px; margin: 15px 0;">
+                            <p><strong>Bank:</strong> BCA</p>
+                            <p><strong>Nomor Rekening:</strong> 1234567890</p>
+                            <p><strong>Atas Nama:</strong> KHUWAS STORE</p>
+                            <p><strong>Jumlah:</strong> Rp ${total.toLocaleString()}</p>
+                        </div>
+                        <p>Setelah transfer, konfirmasi ke WhatsApp CS: 0812-3456-7890</p>
+                    `;
+                    break;
+                    
+                case 'ovo':
+                    paymentHTML = `
+                        <h3 style="color: var(--primary);">OVO</h3>
+                        <p>Silakan transfer ke:</p>
+                        <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 10px; margin: 15px 0;">
+                            <p><strong>Nomor OVO:</strong> 0812-3456-7890</p>
+                            <p><strong>Atas Nama:</strong> KHUWAS STORE</p>
+                            <p><strong>Jumlah:</strong> Rp ${total.toLocaleString()}</p>
+                        </div>
+                        <p>Setelah transfer, konfirmasi ke WhatsApp CS: 0812-3456-7890</p>
+                    `;
+                    break;
+                    
+                case 'qris':
+                    paymentHTML = `
+                        <h3 style="color: var(--primary);">QRIS</h3>
+                        <p>Scan QR Code berikut:</p>
+                        <div style="text-align: center; margin: 20px 0;">
+                            <div style="width: 200px; height: 200px; background: white; margin: 0 auto; display: flex; align-items: center; justify-content: center; border-radius: 10px;">
+                                <span style="color: black;">[QR CODE]</span>
+                            </div>
+                        </div>
+                        <p><strong>Jumlah:</strong> Rp ${total.toLocaleString()}</p>
+                    `;
+                    break;
+                    
+                default:
+                    paymentHTML = `
+                        <h3 style="color: var(--primary);">Transfer Bank</h3>
+                        <p>Silakan transfer ke:</p>
+                        <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 10px; margin: 15px 0;">
+                            <p><strong>Bank:</strong> ${method.toUpperCase()}</p>
+                            <p><strong>Nomor Rekening:</strong> 1234567890</p>
+                            <p><strong>Atas Nama:</strong> KHUWAS STORE</p>
+                            <p><strong>Jumlah:</strong> Rp ${total.toLocaleString()}</p>
+                        </div>
+                        <p>Setelah transfer, konfirmasi ke WhatsApp CS: 0812-3456-7890</p>
+                    `;
+            }
+            
+            paymentContent.innerHTML = paymentHTML;
+            document.getElementById('paymentModal').style.display = 'flex';
+            
+            // Clear cart after payment
+            setTimeout(() => {
+                cart = [];
+                localStorage.setItem('khuwasstore_cart', JSON.stringify(cart));
+                updateCart();
+            }, 1000);
+        }
+
+        // Modal Functions
+        function closeModal() {
+            document.getElementById('checkoutModal').style.display = 'none';
+            document.getElementById('checkoutForm').reset();
+        }
+
+        function closePaymentModal() {
+            document.getElementById('paymentModal').style.display = 'none';
+            toastr.success('Pesanan berhasil diproses! CS akan menghubungi Anda.');
+        }
+
+        // UI Functions
+        function scrollToSection(sectionId) {
+            const element = document.getElementById(sectionId + '-content') || document.getElementById(sectionId);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        function updateBalanceDisplay() {
+            document.getElementById('userBalance').textContent = `Rp ${userBalance.toLocaleString()}`;
+        }
+
+        function toggleCart() {
+            const cartSidebar = document.querySelector('.cart-sidebar');
+            cartSidebar.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function showProductDetail(productId) {
+            // Find product
+            let product = products.diamond.find(p => p.id === productId) || 
+                         products.joki.find(p => p.id === productId) || 
+                         products.mabar.find(p => p.id === productId);
+            
+            if (product) {
+                toastr.info(`Detail ${product.name}: ${product.description} - Rp ${product.price.toLocaleString()}`);
+            }
+        }
+
+        // Simulate live updates
+        function simulateLiveUpdates() {
+            // Randomly update stock badges
+            setInterval(() => {
+                const randomProduct = Math.floor(Math.random() * 20) + 1;
+                // This is just for visual effect
+            }, 10000);
+        }
+
+        // Start live updates
+        simulateLiveUpdates();
+
+        // Close modals when clicking outside
+        window.onclick = function(event) {
+            const checkoutModal = document.getElementById('checkoutModal');
+            const paymentModal = document.getElementById('paymentModal');
+            
+            if (event.target === checkoutModal) {
+                closeModal();
+            }
+            if (event.target === paymentModal) {
+                closePaymentModal();
+            }
+        }
+    </script>
+</body>
+</html>

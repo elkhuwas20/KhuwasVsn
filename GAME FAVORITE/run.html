@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mobile Legends: Battle Analytics</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+    <style>
+        :root {
+            --ml-primary: #f39c12;
+            --ml-secondary: #e74c3c;
+            --ml-dark: #2c3e50;
+            --ml-darker: #1a252f;
+            --ml-light: #ecf0f1;
+            --ml-blue: #3498db;
+            --ml-green: #2ecc71;
+            --ml-purple: #9b59b6;
+            --ml-gold: #f1c40f;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0c2461 0%, #1a252f 100%);
+            color: var(--ml-light);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background: linear-gradient(90deg, var(--ml-darker) 0%, rgba(44, 62, 80, 0.9) 100%);
+            padding: 20px 0;
+            border-bottom: 3px solid var(--ml-primary);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo i {
+            font-size: 2.5rem;
+            color: var(--ml-primary);
+            text-shadow: 0 0 10px rgba(243, 156, 18, 0.5);
+        }
+
+        .logo h1 {
+            font-size: 2.2rem;
+            background: linear-gradient(to right, var(--ml-primary), var(--ml-gold));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .logo span {
+            color: var(--ml-secondary);
+        }
+
+        .header-stats {
+            display: flex;
+            gap: 25px;
+        }
+
+        .stat-box {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px 20px;
+            border-radius: 10px;
+            border: 1px solid rgba(243, 156, 18, 0.3);
+            min-width: 120px;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--ml-primary);
+            text-shadow: 0 0 5px rgba(243, 156, 18, 0.5);
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #bdc3c7;
+        }
+
+        /* Main Dashboard */
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid rgba(243, 156, 18, 0.5);
+        }
+
+        .card-title {
+            font-size: 1.4rem;
+            color: var(--ml-primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-title i {
+            font-size: 1.2rem;
+        }
+
+        .card-content {
+            height: 300px;
+            position: relative;
+        }
+
+        /* Hero Selection */
+        .hero-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .hero-card {
+            background: linear-gradient(135deg, rgba(52, 152, 219, 0.2), rgba(155, 89, 182, 0.2));
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .hero-card:hover {
+            transform: scale(1.05);
+            border-color: var(--ml-primary);
+        }
+
+        .hero-card.active {
+            border-color: var(--ml-primary);
+            background: linear-gradient(135deg, rgba(243, 156, 18, 0.3), rgba(241, 196, 15, 0.3));
+        }
+
+        .hero-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--ml-dark);
+            margin: 0 auto 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: var(--ml-primary);
+        }
+
+        .hero-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .hero-role {
+            font-size: 0.8rem;
+            color: #95a5a6;
+            padding: 3px 8px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            display: inline-block;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-item {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            border-left: 4px solid var(--ml-primary);
+        }
+
+        .stat-item .value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--ml-primary);
+            margin-bottom: 5px;
+        }
+
+        .stat-item .label {
+            font-size: 0.9rem;
+            color: #bdc3c7;
+        }
+
+        /* Role Distribution */
+        .role-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 5px 12px;
+            border-radius: 20px;
+            margin: 5px;
+            font-size: 0.9rem;
+        }
+
+        .role-assassin { background: rgba(231, 76, 60, 0.2); border: 1px solid var(--ml-secondary); }
+        .role-mage { background: rgba(155, 89, 182, 0.2); border: 1px solid var(--ml-purple); }
+        .role-marksman { background: rgba(46, 204, 113, 0.2); border: 1px solid var(--ml-green); }
+        .role-fighter { background: rgba(52, 152, 219, 0.2); border: 1px solid var(--ml-blue); }
+        .role-tank { background: rgba(149, 165, 166, 0.2); border: 1px solid #95a5a6; }
+        .role-support { background: rgba(243, 156, 18, 0.2); border: 1px solid var(--ml-primary); }
+
+        /* Tier Progress */
+        .tier-progress {
+            margin-top: 20px;
+        }
+
+        .tier-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+        }
+
+        .tier-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--ml-darker);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 1.2rem;
+            color: var(--ml-gold);
+        }
+
+        .tier-info {
+            flex: 1;
+        }
+
+        .tier-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .tier-bar {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .tier-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--ml-primary), var(--ml-gold));
+            border-radius: 4px;
+        }
+
+        /* Match History */
+        .match-history {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .match-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            margin-bottom: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            border-left: 4px solid;
+        }
+
+        .match-win { border-left-color: var(--ml-green); }
+        .match-loss { border-left-color: var(--ml-secondary); }
+
+        .match-result {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-weight: bold;
+            margin-right: 15px;
+            font-size: 0.8rem;
+        }
+
+        .win { background: rgba(46, 204, 113, 0.2); color: var(--ml-green); }
+        .loss { background: rgba(231, 76, 60, 0.2); color: var(--ml-secondary); }
+
+        .match-stats {
+            flex: 1;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .match-kda {
+            font-weight: bold;
+            color: var(--ml-primary);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 30px 0;
+            margin-top: 50px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #95a5a6;
+            font-size: 0.9rem;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 15px;
+        }
+
+        .footer-links a {
+            color: var(--ml-primary);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: var(--ml-gold);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .header-stats {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .hero-selector {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-crown"></i>
+                    <h1>Mobile<span>Analytics</span></h1>
+                </div>
+                <div class="header-stats">
+                    <div class="stat-box">
+                        <div class="stat-value" id="totalMatches">0</div>
+                        <div class="stat-label">Total Matches</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="winRate">0%</div>
+                        <div class="stat-label">Win Rate</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="avgKDA">0.0</div>
+                        <div class="stat-label">Avg KDA</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="topHero">-</div>
+                        <div class="stat-label">Top Hero</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="dashboard">
+            <!-- Hero Performance Chart -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title"><i class="fas fa-chart-line"></i> Hero Performance</h2>
+                    <select id="heroSelect" class="hero-dropdown">
+                        <option value="all">All Heroes</option>
+                        <option value="gusion">Gusion</option>
+                        <option value="ling">Ling</option>
+                        <option value="fanny">Fanny</option>
+                        <option value="kagura">Kagura</option>
+                    </select>
+                </div>
+                <div class="card-content">
+                    <canvas id="heroChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Role Distribution -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title"><i class="fas fa-users"></i> Role Distribution</h2>
+                </div>
+                <div class="card-content">
+                    <canvas id="roleChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Win Rate by Tier -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title"><i class="fas fa-trophy"></i> Win Rate by Tier</h2>
+                </div>
+                <div class="card-content">
+                    <canvas id="tierChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Player Stats -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title"><i class="fas fa-user-shield"></i> Player Statistics</h2>
+                </div>
+                <div class="card-content">
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="value" id="avgKills">0.0</div>
+                            <div class="label">Avg Kills</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="value" id="avgDeaths">0.0</div>
+                            <div class="label">Avg Deaths</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="value" id="avgAssists">0.0</div>
+                            <div class="label">Avg Assists</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="value" id="avgGold">0</div>
+                            <div class="label">Avg Gold</div>
+                        </div>
+                    </div>
+                    
+                    <div class="tier-progress">
+                        <h3 style="margin: 20px 0 15px; color: var(--ml-primary);">Rank Distribution</h3>
+                        <div class="tier-item">
+                            <div class="tier-icon">M</div>
+                            <div class="tier-info">
+                                <div class="tier-name">Mythic</div>
+                                <div class="tier-bar">
+                                    <div class="tier-fill" style="width: 15%"></div>
+                                </div>
+                            </div>
+                            <div class="tier-percent">15%</div>
+                        </div>
+                        <div class="tier-item">
+                            <div class="tier-icon">L</div>
+                            <div class="tier-info">
+                                <div class="tier-name">Legend</div>
+                                <div class="tier-bar">
+                                    <div class="tier-fill" style="width: 20%"></div>
+                                </div>
+                            </div>
+                            <div class="tier-percent">20%</div>
+                        </div>
+                        <div class="tier-item">
+                            <div class="tier-icon">E</div>
+                            <div class="tier-info">
+                                <div class="tier-name">Epic</div>
+                                <div class="tier-bar">
+                                    <div class="tier-fill" style="width: 25%"></div>
+                                </div>
+                            </div>
+                            <div class="tier-percent">25%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hero Selection -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title"><i class="fas fa-user-ninja"></i> Top Heroes</h2>
+                </div>
+                <div class="card-content">
+                    <div class="hero-selector" id="heroSelector">
+                        <!-- Hero cards will be generated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Match History -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title"><i class="fas fa-history"></i> Recent Matches</h2>
+                </div>
+                <div class="card-content match-history" id="matchHistory">
+                    <!-- Match items will be generated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>Mobile Legends: Battle Analytics Dashboard | Data is simulated for demonstration purposes</p>
+            <p>© 2024 ML Analytics. Not affiliated with Moonton.</p>
+            <div class="footer-links">
+                <a href="#"><i class="fab fa-github"></i> GitHub</a>
+                <a href="#"><i class="fas fa-code"></i> API Docs</a>
+                <a href="#"><i class="fas fa-question-circle"></i> Help</a>
+                <a href="#"><i class="fas fa-cog"></i> Settings</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize data
+        const mobileLegendsData = {
+            heroes: [
+                { id: 'gusion', name: 'Gusion', role: 'Assassin', kills: 8.2, deaths: 3.1, assists: 5.4, winRate: 58.3, games: 120 },
+                { id: 'ling', name: 'Ling', role: 'Assassin', kills: 7.8, deaths: 2.9, assists: 4.8, winRate: 55.7, games: 95 },
+                { id: 'fanny', name: 'Fanny', role: 'Assassin', kills: 9.1, deaths: 4.2, assists: 3.9, winRate: 52.4, games: 150 },
+                { id: 'kagura', name: 'Kagura', role: 'Mage', kills: 6.5, deaths: 2.8, assists: 8.2, winRate: 61.2, games: 180 },
+                { id: 'harith', name: 'Harith', role: 'Mage', kills: 7.2, deaths: 3.3, assists: 7.5, winRate: 59.8, games: 135 },
+                { id: 'granger', name: 'Granger', role: 'Marksman', kills: 10.1, deaths: 4.5, assists: 3.2, winRate: 53.6, games: 110 },
+                { id: 'chou', name: 'Chou', role: 'Fighter', kills: 5.8, deaths: 4.1, assists: 9.3, winRate: 57.9, games: 200 },
+                { id: 'wanwan', name: 'Wanwan', role: 'Marksman', kills: 9.5, deaths: 3.8, assists: 4.1, winRate: 56.3, games: 165 }
+            ],
+            
+            roles: [
+                { role: 'Assassin', percentage: 32, winRate: 55.4 },
+                { role: 'Mage', percentage: 24, winRate: 58.7 },
+                { role: 'Marksman', percentage: 18, winRate: 53.9 },
+                { role: 'Fighter', percentage: 12, winRate: 56.2 },
+                { role: 'Tank', percentage: 8, winRate: 54.8 },
+                { role: 'Support', percentage: 6, winRate: 57.1 }
+            ],
+            
+            tiers: [
+                { tier: 'Mythic', winRate: 62.3, players: 15 },
+                { tier: 'Legend', winRate: 55.8, players: 20 },
+                { tier: 'Epic', winRate: 50.2, players: 25 },
+                { tier: 'Grandmaster', winRate: 48.7, players: 25 },
+                { tier: 'Master', winRate: 45.1, players: 15 }
+            ],
+            
+            matches: [
+                { hero: 'Gusion', result: 'win', kills: 12, deaths: 3, assists: 8, duration: '15:42', date: '2024-01-15' },
+                { hero: 'Kagura', result: 'win', kills: 7, deaths: 2, assists: 15, duration: '18:23', date: '2024-01-15' },
+                { hero: 'Ling', result: 'loss', kills: 9, deaths: 5, assists: 4, duration: '22:11', date: '2024-01-14' },
+                { hero: 'Chou', result: 'win', kills: 4, deaths: 6, assists: 18, duration: '25:34', date: '2024-01-14' },
+                { hero: 'Fanny', result: 'loss', kills: 11, deaths: 8, assists: 3, duration: '16:45', date: '2024-01-13' },
+                { hero: 'Granger', result: 'win', kills: 14, deaths: 4, assists: 5, duration: '19:22', date: '2024-01-13' }
+            ]
+        };
+
+        // DOM Elements
+        let heroChart, roleChart, tierChart;
+        
+        // Initialize the dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            updateHeaderStats();
+            initializeHeroSelector();
+            initializeCharts();
+            updateMatchHistory();
+            updatePlayerStats();
+            
+            // Add event listeners
+            document.getElementById('heroSelect').addEventListener('change', updateHeroChart);
+            
+            // Simulate real-time updates
+            setInterval(updateLiveStats, 5000);
+        });
+
+        function updateHeaderStats() {
+            const totalMatches = mobileLegendsData.heroes.reduce((sum, hero) => sum + hero.games, 0);
+            const avgWinRate = (mobileLegendsData.heroes.reduce((sum, hero) => sum + hero.winRate, 0) / mobileLegendsData.heroes.length).toFixed(1);
+            const topHero = mobileLegendsData.heroes.reduce((max, hero) => hero.winRate > max.winRate ? hero : max);
+            const avgKDA = (mobileLegendsData.heroes.reduce((sum, hero) => {
+                const kda = (hero.kills + hero.assists) / Math.max(hero.deaths, 1);
+                return sum + kda;
+            }, 0) / mobileLegendsData.heroes.length).toFixed(2);
+
+            document.getElementById('totalMatches').textContent = totalMatches.toLocaleString();
+            document.getElementById('winRate').textContent = avgWinRate + '%';
+            document.getElementById('avgKDA').textContent = avgKDA;
+            document.getElementById('topHero').textContent = topHero.name;
+        }
+
+        function initializeHeroSelector() {
+            const heroSelector = document.getElementById('heroSelector');
+            heroSelector.innerHTML = '';
+            
+            mobileLegendsData.heroes.forEach(hero => {
+                const heroCard = document.createElement('div');
+                heroCard.className = 'hero-card';
+                heroCard.dataset.heroId = hero.id;
+                
+                const roleClass = `role-${hero.role.toLowerCase()}`;
+                
+                heroCard.innerHTML = `
+                    <div class="hero-icon">
+                        <i class="fas fa-user-ninja"></i>
+                    </div>
+                    <div class="hero-name">${hero.name}</div>
+                    <div class="hero-role ${roleClass}">${hero.role}</div>
+                    <div style="margin-top: 8px; font-size: 0.9rem; color: var(--ml-primary)">
+                        ${hero.winRate}% WR
+                    </div>
+                `;
+                
+                heroCard.addEventListener('click', () => {
+                    document.querySelectorAll('.hero-card').forEach(card => card.classList.remove('active'));
+                    heroCard.classList.add('active');
+                    updateHeroDetails(hero);
+                });
+                
+                heroSelector.appendChild(heroCard);
+            });
+            
+            // Activate first hero by default
+            if (heroSelector.firstChild) {
+                heroSelector.firstChild.classList.add('active');
+                updateHeroDetails(mobileLegendsData.heroes[0]);
+            }
+        }
+
+        function updateHeroDetails(hero) {
+            document.getElementById('avgKills').textContent = hero.kills.toFixed(1);
+            document.getElementById('avgDeaths').textContent = hero.deaths.toFixed(1);
+            document.getElementById('avgAssists').textContent = hero.assists.toFixed(1);
+            document.getElementById('avgGold').textContent = Math.round(hero.kills * 200 + hero.assists * 50).toLocaleString();
+            
+            // Update hero chart with selected hero data
+            updateHeroChart();
+        }
+
+        function initializeCharts() {
+            const ctx1 = document.getElementById('heroChart').getContext('2d');
+            const ctx2 = document.getElementById('roleChart').getContext('2d');
+            const ctx3 = document.getElementById('tierChart').getContext('2d');
+            
+            // Hero Performance Chart
+            heroChart = new Chart(ctx1, {
+                type: 'radar',
+                data: {
+                    labels: ['Kills', 'Deaths', 'Assists', 'Damage', 'Survival', 'Impact'],
+                    datasets: [{
+                        label: 'Average Performance',
+                        data: [8.2, 3.1, 5.4, 85, 70, 65],
+                        backgroundColor: 'rgba(243, 156, 18, 0.2)',
+                        borderColor: 'rgba(243, 156, 18, 1)',
+                        borderWidth: 2,
+                        pointBackgroundColor: 'rgba(243, 156, 18, 1)',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: {
+                                display: true,
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            pointLabels: {
+                                color: '#ecf0f1',
+                                font: {
+                                    size: 11
+                                }
+                            },
+                            ticks: {
+                                display: false,
+                                maxTicksLimit: 5
+                            },
+                            suggestedMin: 0,
+                            suggestedMax: 100
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#ecf0f1'
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Role Distribution Chart
+            roleChart = new Chart(ctx2, {
+                type: 'doughnut',
+                data: {
+                    labels: mobileLegendsData.roles.map(r => r.role),
+                    datasets: [{
+                        data: mobileLegendsData.roles.map(r => r.percentage),
+                        backgroundColor: [
+                            'rgba(231, 76, 60, 0.8)',    // Assassin - Red
+                            'rgba(155, 89, 182, 0.8)',   // Mage - Purple
+                            'rgba(46, 204, 113, 0.8)',   // Marksman - Green
+                            'rgba(52, 152, 219, 0.8)',   // Fighter - Blue
+                            'rgba(149, 165, 166, 0.8)',  // Tank - Gray
+                            'rgba(243, 156, 18, 0.8)'    // Support - Orange
+                        ],
+                        borderColor: [
+                            'rgba(231, 76, 60, 1)',
+                            'rgba(155, 89, 182, 1)',
+                            'rgba(46, 204, 113, 1)',
+                            'rgba(52, 152, 219, 1)',
+                            'rgba(149, 165, 166, 1)',
+                            'rgba(243, 156, 18, 1)'
+                        ],
+                        borderWidth: 2,
+                        hoverOffset: 15
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                color: '#ecf0f1',
+                                padding: 15,
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const role = mobileLegendsData.roles[context.dataIndex];
+                                    return `${role.role}: ${role.percentage}% (WR: ${role.winRate}%)`;
+                                }
+                            }
+                        }
+                    },
+                    cutout: '65%'
+                }
+            });
+            
+            // Tier Win Rate Chart
+            tierChart = new Chart(ctx3, {
+                type: 'bar',
+                data: {
+                    labels: mobileLegendsData.tiers.map(t => t.tier),
+                    datasets: [{
+                        label: 'Win Rate %',
+                        data: mobileLegendsData.tiers.map(t => t.winRate),
+                        backgroundColor: [
+                            'rgba(243, 156, 18, 0.8)',
+                            'rgba(52, 152, 219, 0.8)',
+                            'rgba(155, 89, 182, 0.8)',
+                            'rgba(46, 204, 113, 0.8)',
+                            'rgba(231, 76, 60, 0.8)'
+                        ],
+                        borderColor: [
+                            'rgba(243, 156, 18, 1)',
+                            'rgba(52, 152, 219, 1)',
+                            'rgba(155, 89, 182, 1)',
+                            'rgba(46, 204, 113, 1)',
+                            'rgba(231, 76, 60, 1)'
+                        ],
+                        borderWidth: 2,
+                        borderRadius: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: '#ecf0f1',
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                color: '#ecf0f1'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const tier = mobileLegendsData.tiers[context.dataIndex];
+                                    return `Win Rate: ${tier.winRate}% | Players: ${tier.players}%`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateHeroChart() {
+            const selectedHero = document.getElementById('heroSelect').value;
+            
+            // In a real app, you would fetch data for the selected hero
+            // For now, we'll simulate with random data
+            const baseData = [8.2, 3.1, 5.4, 85, 70, 65];
+            const newData = baseData.map(value => {
+                const variation = Math.random() * 20 - 10; // -10 to +10
+                return Math.max(10, Math.min(100, value + variation));
+            });
+            
+            heroChart.data.datasets[0].data = newData;
+            
+            if (selectedHero !== 'all') {
+                const hero = mobileLegendsData.heroes.find(h => h.id === selectedHero);
+                heroChart.data.datasets[0].label = `${hero.name} Performance`;
+            } else {
+                heroChart.data.datasets[0].label = 'Average Performance';
+            }
+            
+            heroChart.update();
+        }
+
+        function updateMatchHistory() {
+            const matchHistory = document.getElementById('matchHistory');
+            matchHistory.innerHTML = '';
+            
+            mobileLegendsData.matches.forEach(match => {
+                const matchItem = document.createElement('div');
+                matchItem.className = `match-item ${match.result === 'win' ? 'match-win' : 'match-loss'}`;
+                
+                const kda = ((match.kills + match.assists) / Math.max(match.deaths, 1)).toFixed(2);
+                
+                matchItem.innerHTML = `
+                    <div class="match-result ${match.result}">${match.result.toUpperCase()}</div>
+                    <div style="flex: 1;">
+                        <div style="font-weight: bold; margin-bottom: 5px;">${match.hero}</div>
+                        <div style="font-size: 0.8rem; color: #95a5a6;">${match.date} • ${match.duration}</div>
+                    </div>
+                    <div class="match-stats">
+                        <div class="match-kda">${match.kills}/${match.deaths}/${match.assists}</div>
+                        <div style="margin-left: 15px; color: ${match.result === 'win' ? '#2ecc71' : '#e74c3c'}">KDA: ${kda}</div>
+                    </div>
+                `;
+                
+                matchHistory.appendChild(matchItem);
+            });
+        }
+
+        function updatePlayerStats() {
+            // Calculate average stats from heroes data
+            const avgKills = (mobileLegendsData.heroes.reduce((sum, hero) => sum + hero.kills, 0) / mobileLegendsData.heroes.length).toFixed(1);
+            const avgDeaths = (mobileLegendsData.heroes.reduce((sum, hero) => sum + hero.deaths, 0) / mobileLegendsData.heroes.length).toFixed(1);
+            const avgAssists = (mobileLegendsData.heroes.reduce((sum, hero) => sum + hero.assists, 0) / mobileLegendsData.heroes.length).toFixed(1);
+            
+            document.getElementById('avgKills').textContent = avgKills;
+            document.getElementById('avgDeaths').textContent = avgDeaths;
+            document.getElementById('avgAssists').textContent = avgAssists;
+            
+            // Calculate average gold (simulated)
+            const avgGold = Math.round(mobileLegendsData.heroes.reduce((sum, hero) => {
+                return sum + (hero.kills * 200 + hero.assists * 50 + hero.winRate * 10);
+            }, 0) / mobileLegendsData.heroes.length).toLocaleString();
+            
+            document.getElementById('avgGold').textContent = avgGold;
+        }
+
+        function updateLiveStats() {
+            // Simulate live updates
+            const randomHeroIndex = Math.floor(Math.random() * mobileLegendsData.heroes.length);
+            const hero = mobileLegendsData.heroes[randomHeroIndex];
+            
+            // Small random updates to stats
+            const winRateElement = document.getElementById('winRate');
+            const currentWinRate = parseFloat(winRateElement.textContent);
+            const change = (Math.random() - 0.5) * 0.2; // -0.1 to +0.1
+            const newWinRate = Math.max(40, Math.min(70, currentWinRate + change));
+            
+            winRateElement.textContent = newWinRate.toFixed(1) + '%';
+            
+            // Update top hero occasionally
+            if (Math.random() > 0.7) {
+                const topHero = mobileLegendsData.heroes[Math.floor(Math.random() * mobileLegendsData.heroes.length)];
+                document.getElementById('topHero').textContent = topHero.name;
+            }
+            
+            // Add a new match to history occasionally
+            if (Math.random() > 0.8) {
+                const results = ['win', 'loss'];
+                const heroes = mobileLegendsData.heroes;
+                const randomHero = heroes[Math.floor(Math.random() * heroes.length)];
+                const newMatch = {
+                    hero: randomHero.name,
+                    result: results[Math.floor(Math.random() * 2)],
+                    kills: Math.floor(Math.random() * 15) + 1,
+                    deaths: Math.floor(Math.random() * 10) + 1,
+                    assists: Math.floor(Math.random() * 20) + 1,
+                    duration: `${Math.floor(Math.random() * 10) + 10}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')}`,
+                    date: new Date().toISOString().split('T')[0]
+                };
+                
+                mobileLegendsData.matches.unshift(newMatch);
+                if (mobileLegendsData.matches.length > 10) {
+                    mobileLegendsData.matches.pop();
+                }
+                
+                updateMatchHistory();
+                
+                // Update total matches
+                const totalMatchesElement = document.getElementById('totalMatches');
+                const currentTotal = parseInt(totalMatchesElement.textContent.replace(/,/g, ''));
+                totalMatchesElement.textContent = (currentTotal + 1).toLocaleString();
+            }
+            
+            // Update charts with slight variations
+            updateChartsWithVariation();
+        }
+
+        function updateChartsWithVariation() {
+            // Add small variations to chart data for live feel
+            const variation = (Math.random() - 0.5) * 5; // -2.5 to +2.5
+            
+            // Update role chart
+            roleChart.data.datasets[0].data = roleChart.data.datasets[0].data.map(value => {
+                const newValue = value + (Math.random() - 0.5) * 2;
+                return Math.max(1, newValue);
+            });
+            
+            // Normalize to 100%
+            const roleSum = roleChart.data.datasets[0].data.reduce((a, b) => a + b, 0);
+            roleChart.data.datasets[0].data = roleChart.data.datasets[0].data.map(value => 
+                Math.round((value / roleSum) * 100)
+            );
+            
+            // Update tier chart
+            tierChart.data.datasets[0].data = tierChart.data.datasets[0].data.map(value => {
+                const newValue = value + (Math.random() - 0.5);
+                return Math.max(40, Math.min(70, newValue));
+            });
+            
+            // Update charts
+            roleChart.update('none');
+            tierChart.update('none');
+        }
+
+        // Add animation to stat numbers
+        function animateValue(element, start, end, duration) {
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                const value = Math.floor(progress * (end - start) + start);
+                element.textContent = value.toLocaleString();
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+
+        // Initialize animations when page loads
+        window.addEventListener('load', () => {
+            const totalMatchesElement = document.getElementById('totalMatches');
+            const finalValue = parseInt(totalMatchesElement.textContent.replace(/,/g, ''));
+            animateValue(totalMatchesElement, 0, finalValue, 2000);
+        });
+    </script>
+</body>
+</html>
